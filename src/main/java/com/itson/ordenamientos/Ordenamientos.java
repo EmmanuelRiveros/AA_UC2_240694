@@ -1,4 +1,4 @@
-package com.itson.ordenamientos;
+package com.mycompany.ordenamientos;
 
 import java.util.Arrays;
 
@@ -6,86 +6,119 @@ import java.util.Arrays;
  *
  * @author Emmanuel Riveros
  */
-
 public class Ordenamientos {
-    
+
     public static void main(String[] args) {
-        
         Ordenamientos ordenador = new Ordenamientos();
-        int[] arregloPrueba = {8, 3, 1, 7, 0, 10, 2};
         
-        System.out.println("Arreglo original:");
-        System.out.println(Arrays.toString(arregloPrueba));
-        
-        ordenador.quickSort(arregloPrueba, 0, arregloPrueba.length - 1);
-        
-        System.out.println("\nArreglo ordenado:");
-        System.out.println(Arrays.toString(arregloPrueba));
+        // Prueba QuickSort
+        //int[] arregloQuick = {8, 3, 1, 7, 0, 10, 2};
+        //System.out.println("--- Prueba QuickSort ---");
+        //System.out.println("Original: " + Arrays.toString(arregloQuick));
+        //ordenador.quickSort(arregloQuick, 0, arregloQuick.length - 1);
+        //System.out.println("Ordenado: " + Arrays.toString(arregloQuick));
+
+        // Prueba Merge Sort
+        int[] arregloMerge = {8, 3, 1, 7, 0, 10, 2};
+        System.out.println("\n--- Prueba Merge Sort ---");
+        System.out.println("Original: " + Arrays.toString(arregloMerge));
+        ordenador.mergeSort(arregloMerge, 0, arregloMerge.length - 1);
+        System.out.println("Ordenado: " + Arrays.toString(arregloMerge));
     }
-    
-    // Método principal de QuickSort
+
+    // --- MÉTODOS DE QUICKSORT (Ya los tenías) ---
     public void quickSort(int[] arr, int inicio, int fin) {
-        // 1 comparación (inicio < fin)
         if (inicio < fin) {
-            
-            // 1 asignación, 1 llamada a método
             int indicePivote = particion(arr, inicio, fin);
-            
-            // 1 llamada a método, 1 resta algebraica
             quickSort(arr, inicio, indicePivote - 1);
-            
-            // 1 llamada a método, 1 suma algebraica
             quickSort(arr, indicePivote + 1, fin);
         }
     }
 
-    // Método auxiliar para realizar la partición
     private int particion(int[] arr, int inicio, int fin) {
-        // 1 asignación, 1 acceso a arreglo
-        int pivote = arr[fin]; 
-        
-        // 1 asignación, 1 resta
-        int i = (inicio - 1); 
-
-        // 1 asignación (j=inicio); n comparaciones (j<fin); n incrementos (j++)
+        int pivote = arr[fin];
+        int i = (inicio - 1);
         for (int j = inicio; j < fin; j++) {
-            
-            // n accesos a arreglo, n comparaciones
             if (arr[j] <= pivote) {
-                
-                // n incrementos (en el peor de los casos)
-                i++; 
-                
-                // Intercambio de arr[i] y arr[j]
-                // n asignaciones, n accesos
-                int temp = arr[i]; 
-                // n asignaciones, 2n accesos
-                arr[i] = arr[j]; 
-                // n asignaciones
-                arr[j] = temp; 
+                i++;
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
         }
+        int temp = arr[i + 1];
+        arr[i + 1] = arr[fin];
+        arr[fin] = temp;
+        return i + 1;
+    }
 
-        // Intercambio final del pivote a su posición correcta
-        // 1 asignación, 1 acceso, 1 suma
-        int temp = arr[i + 1]; 
-        // 1 asignación, 2 accesos, 1 suma
-        arr[i + 1] = arr[fin]; 
-        // 1 asignación, 1 acceso
-        arr[fin] = temp; 
+    // --- NUEVOS MÉTODOS: MERGE SORT ---
 
-        // 1 retorno, 1 suma
-        return i + 1; 
+    // Método principal de Merge Sort
+    public void mergeSort(int[] arr, int izquierda, int derecha) {
+        // 1 comparación (izq < der)
+        if (izquierda < derecha) {
+            // 1 asignación, 3 operaciones aritméticas (punto medio)
+            int medio = izquierda + (derecha - izquierda) / 2;
 
-        /*
-         * ANALISIS DE COMPLEJIDAD (Método partición)
-         * Expresión algebraica aproximada del ciclo: f(n) = 3 + 3n + 5n(en el if) + 9 = 8n + 12 operaciones.
-         * * NOTACIÓN ASINTÓTICA:
-         * El método de partición recorre el subarreglo de tamaño n una vez, por lo que su complejidad es lineal O(n).
-         * Dado que QuickSort divide el arreglo recursivamente (idealmente a la mitad), la profundidad del árbol 
-         * de recursión es log(n). Por lo tanto, al multiplicar la partición por la profundidad, obtenemos:
-         * Caso Promedio / Mejor Caso: O(n log n).
-         * Peor Caso: O(n^2) (ocurre si el arreglo ya está ordenado y siempre se elige el último elemento como pivote).
-         */
+            // 1 llamada a método (división izquierda)
+            mergeSort(arr, izquierda, medio);
+            
+            // 1 llamada a método, 1 suma (división derecha)
+            mergeSort(arr, medio + 1, derecha);
+
+            // 1 llamada a método (proceso de mezcla)
+            merge(arr, izquierda, medio, derecha);
+        }
+    }
+
+    // Método auxiliar para mezclar (Merge)
+    private void merge(int[] arr, int izq, int medio, int der) {
+        // Cálculo de tamaños: 2 asignaciones, 2 restas, 1 suma
+        int n1 = medio - izq + 1;
+        int n2 = der - medio;
+
+        // Creación de arreglos temporales
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        // Copia de datos a arreglos temporales: n operaciones
+        for (int i = 0; i < n1; ++i) {
+            L[i] = arr[izq + i];      
+        }
+        for (int j = 0; j < n2; ++j) { 
+            R[j] = arr[medio + 1 + j]; 
+        }
+
+        int i = 0, j = 0;
+        int k = izq;
+
+        // Proceso de mezcla: n comparaciones y asignaciones
+        while (i < n1 && j < n2) {  
+            if (L[i] <= R[j]) {      
+                arr[k] = L[i];       
+                i++;                 
+            } else {
+                arr[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        // Copiar elementos restantes de L[] si los hay
+        while (i < n1) {
+            arr[k] = L[i];
+            i++;
+            k++;
+        }
+
+        // Copiar elementos restantes de R[] si los hay
+        while (j < n2) {
+            arr[k] = R[j];
+            j++;
+            k++;
+        }
+
+        
     }
 }
